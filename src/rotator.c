@@ -12,7 +12,14 @@
 
 #include <rotator.h>
 
-int		loop_events(t_rotator *r)
+int handle_exit(t_rotator *r)
+{
+	free_all(r);
+	exit(0);
+	return (0);
+}
+
+int loop_events(t_rotator *r)
 {
 	r->d += 1;
 	if (r->d >= 45)
@@ -26,18 +33,25 @@ int		loop_events(t_rotator *r)
 		free(r->img);
 		r->img = init_img(r->mlx);
 	}
+	if (r->p.x != r->mouse.x)
+		r->p.x += (r->mouse.x - r->p.x) / 100;
+	if (r->p.y != r->mouse.y)
+		r->p.y += (r->mouse.y - r->p.y) / 100;
 	render(r);
+
 	return (0);
 }
 
-int		main(void)
+int main(void)
 {
-	t_rotator	*r;
+	t_rotator *r;
 
 	r = init_rotator();
 	render(r);
+	mlx_hook(r->win, 6, 1L << 6, mouse_move, r);
 	mlx_loop_hook(r->mlx, loop_events, r);
 	mlx_hook(r->win, 2, 0, handle_keys, r);
+	mlx_hook(r->win, EVENT_WINDOW_CLOSE, 0, handle_exit, r);
 	mlx_loop(r->mlx);
 	return (0);
 }

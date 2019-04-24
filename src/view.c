@@ -12,7 +12,22 @@
 
 #include <rotator.h>
 
-int			color_select(int color, int num)
+int color_scale(int color)
+{
+	int red, blue, green;
+
+	red = (color & 0xff0000) >> 16;
+	blue = (color & 0x00ff00) >> 8;
+	green = (color & 0x0000ff);
+
+	red /= 2;
+	blue /= 2;
+	green /= 2;
+
+	return ((red << 16) + (blue << 8) + green);
+}
+
+int color_select(int color, int num)
 {
 	color += num;
 	color %= 1536;
